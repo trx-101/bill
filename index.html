@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>EMI Caculator</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.29/sweetalert2.min.css" integrity="sha512-doewDSLNwoD1ZCdA1D1LXbbdNlI4uZv7vICMrzxfshHmzzyFNhajLEgH/uigrbOi8ETIftUGBkyLnbyDOU5rpA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <style>
+  .modal-open[style] {
+	padding-right: 0px !important;
+  }
+  </style>
+ 
+  
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="index.css">
+   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+  <script>
+	
+	$(document).ready(function(){
+		
+		$("#validate").click(function (){
+			
+			$('.validation').find('input').each(function () {
+				//alert(this.value);
+			// if(this.value == ""){
+			// 	swal("Please Fill all input field!!");
+			// 	//debugger;
+			// 	$("#modalEBill").modal('hide');
+				
+			// }
+			
+	});	
+	
+});
+	});
+		
+  var amtk =0;
+		var amtv =0;
+	function billDivide(){
+		var date1 = $('#date').val();	
+		var date = date1.split("-").reverse().join("-");		
+		var prstkwh = $('#prstkwh').val();
+		var prvkwh = $('#prvkwh').val();
+		var totalBill = $('#totalbill').val();
+		var elecharge = $('#elecharge').val();
+		var prstkkmUnits = $('#prstKkmUnits').val();
+		var prvkkmUnits = $('#prvKkmUnits').val();
+		let total_bill_units = prstkwh- prvkwh;
+		//let extra_charge = totalBill - elecharge;
+		var extra_charge = totalBill - (amtv+amtk);
+		let kkm_total_units = prstkkmUnits- prvkkmUnits;
+		let vkm_total_units = total_bill_units - kkm_total_units;
+		//let unit_price1 = elecharge/total_bill_units;
+		//let vkmBill = vkm_total_units * unit_price1 +(extra_charge/2);
+		//let kkmBill = kkm_total_units * unit_price1 +(extra_charge/2);
+		let vkmBill = (extra_charge/2) + amtv ;
+		let kkmBill = (extra_charge/2) +amtk ;
+		//debugger;
+		$('#bdate').val(date);
+		$('#prstU').val(prstkwh);
+		$('#prvU').val(prvkwh);
+		$('#tb').val(totalBill);
+		$('#tbu').val(total_bill_units);
+		$('#ec').val(amtk+amtv);
+		$('#prstkkwh').val(prstkkmUnits);
+		$('#prvkkwh').val(prvkkmUnits);
+		$('#vunits').val(vkm_total_units);
+		$('#vpay').val(vkmBill.toFixed(2));
+		$('#kunits').val(kkm_total_units);
+		$('#kpay').val(kkmBill.toFixed(2));
+		 $("#modalEBill").modal('show');
+		 
+		
+		
+	}
+
+	function SaveData(){
+		var date = $('#bdate').val();
+		var prvkwh  = $('#prstU').val();
+		var prstkwh = $('#prvU').val();
+		var totalBillA=$('#tb').val();
+		var totalBillU =$('#tbu').val();
+		var echarge = $('#ec').val();
+		var prstkkmUnits= $('#prstkkwh').val();
+		var prvkkmUnits = $('#prvkkwh').val();
+		var vkm_total_units =$('#vunits').val();
+		var vkmBill = $('#vpay').val();
+		var kkm_total_units = $('#kunits').val();
+		var kkmBill = $('#kpay').val();
+		var extra_charge = totalBillA - echarge;
+		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/", {
+				method: "POST",
+				
+				body: JSON.stringify({"data": {"Date":date,"S_no":"","PrvKWH":prvkwh,"PrstKWH":prstkwh,"KKM_Units":kkm_total_units,
+				"VKM_Units":vkm_total_units,"KKMBill_AMT":kkmBill,
+				"VKMBill_Amt":vkmBill,"PrstKKM_Units":prstkkmUnits,"EleCharge_Amt":echarge,
+				"PrvKKM_Units":prvkkmUnits,"TotalBill_Amt":totalBillA,"ExtraCharge_Amt":extra_charge,"TotalBill_Units":totalBillU}}),
+			}).then(res =>{
+				
+				if (res.status === 201){
+					swal("Good job!", "Data Saved Successfully.", "success")
+					.then(() => {
+						$("#modalLoginAvatar").hide();
+						$("#modalLoginAvatar1").hide();
+						location.reload(true);
+					});
+				}
+				else{
+					swal("Something went wrong!");
+				}
+			})
+	}
+
+	function autoFill(){
+		var prstkwh = $('#prstkwh').val();
+		var prvkwh = $('#prvkwh').val();
+		//var totalBill = $('#totalbill').val();
+		//var elecharge = $('#elecharge').val();
+		var prstkkmUnits = $('#prstKkmUnits').val();
+		var prvkkmUnits = $('#prvKkmUnits').val();
+		let total_bill_units = prstkwh- prvkwh;
+		//let extra_charge = totalBill - elecharge;
+		let kkm_total_units = prstkkmUnits- prvkkmUnits;
+		$('#kunit').html("<b>KKM : </b>"+kkm_total_units);
+		let vkm_total_units = total_bill_units - kkm_total_units;
+		$('#vunit').html("<b>VKM : </b>"+vkm_total_units);
+		//debugger;
+		var temp=0;
+		$( "#kdivb").find("input").each(function() {
+			temp++;
+			if(temp<=4){
+				$( this ).val(75);	
+			}			
+		});
+		var temp1=0;
+		$( "#vdivb").find("input").each(function() {
+			temp1++;
+			if(temp1<=4){
+				$( this ).val(75);	
+			}			
+		});		
+	}
+	function clearData(){
+			$( "#kdivb,#vdivb").find("input").each(function() {			
+				$( this ).val(0);	
+				amtk=0;
+				amtv=0;
+		});
+	}
+	function echargeSep(){
+		var prstkwh = $('#prstkwh').val();
+		var prvkwh = $('#prvkwh').val();
+		//var totalBill = $('#totalbill').val();
+		//var elecharge = $('#elecharge').val();
+		var prstkkmUnits = $('#prstKKmUnits').val();
+		var prvkkmUnits = $('#prvkkmunits').val();
+		let total_bill_units = prstkwh- prvkwh;
+		//let extra_charge = totalBill - elecharge;
+		let kkm_total_units = prstkkmUnits- prvkkmUnits;
+		//$('#kunit').val("KKK : "+kkm_total_units);
+		let vkm_total_units = total_bill_units - kkm_total_units;
+		//$('#vunit').val("VKM : "+vkm_total_units);
+		
+		var pricek = 5.5;
+		 $( "#kdivb").find("input").each(function() {
+		
+			var val = $( this ).val();			
+			amtk += val* pricek;
+			pricek+=0.5;
+			
+		});
+		//alert(amtk);	
+		$("#kidb").val(amtk);
+		var pricev =5.5;
+		$( "#vdivb").find("input").each(function() {
+			var val = $( this ).val();			
+			amtv += val* pricev;
+			pricev+=0.5;
+			
+		});
+		//alert(amtv);	
+		$("#vidb").val(amtv);
+		/*for(kkm_total_units ;kkm_total_units>= 75;){			
+			kkm_total_units =kkm_total_units -75;
+			debugger;
+			console.log(kkm_total_units);
+		}*/
+	
+	}
+
+	function interestCal(){		
+		var principleamount = $('#principleamount').val();
+		var rate = $('#rate').val();
+		var youpay = $('#youpay').val();
+		var interestToPay = (principleamount*rate)/100;
+		$('#interest').val(roundToTwo(interestToPay));
+	}
+	function amountLeft(){		
+		var principleamount = $('#principleamount').val();
+		var rate = $('#rate').val();
+		var youpay = $('#youpay').val();
+		var interestToPay = (principleamount*rate)/100;
+		var amtLeft = principleamount - (youpay - interestToPay);		
+		$('#amountleft').val(roundToTwo(amtLeft));
+	}
+	function countMonth(){		
+		var principleamount1 = $('#principleamount').val();
+		var rate = $('#rate').val();
+		var youpay = $('#youpay').val();
+		var count =0;
+		var totalinterest = 0;
+		//var rs = "&#8377;
+		if(principleamount1 >= 0){		
+		var principleamount =principleamount1;
+			while(principleamount >=0){
+				interestToPay = (principleamount*rate)/100;
+				principleamount = principleamount - (youpay - interestToPay);
+				totalinterest+=interestToPay;
+				count++;
+			}
+			//swal('Any fool can use a computer');
+			alert(roundToTwo(count)+" Months");
+			debugger;
+		}
+		var totalAmount = parseInt(principleamount1)+totalinterest;
+		var youPayExtra = totalAmount -  parseInt(principleamount1);
+		debugger;
+		alert("Total Amount(P+I) You Will Pay: "+roundToTwo(totalAmount)+" Rs \n Total Interest: "+ roundToTwo(youPayExtra) + " Rs");
+		
+	}
+    function reset(){
+	$(':input').val('');
+	}
+	function roundToTwo(num) {    
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+	$(document).ready(function () {     
+       // $("#signup").hide();
+		//$	("#rate").blur(interestCal);
+		$("#rate").keyup(interestCal);
+		$("#youpay").keyup(amountLeft);
+		$("#youpay").change(countMonth);
+		$("#formEmi").trigger("reset");
+    });
+function GetForm(){
+		$("#div-table").show();
+			fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/").then(res=>{
+				if (res.status === 200){
+					// SUCCESS
+					res.json().then(data=>{
+						const yourData = data
+						//debugger;
+						for(var i=yourData.data.length-1;i>=0; i--){
+							$("#tbl-body").append('<tr><td>' + yourData.data[i].S_no + '</td><td>'+yourData.data[i].Date +'</td><td>'+yourData.data[i].PrstKWH+'</td><td>'+yourData.data[i].PrvKWH+'</td><td>'+yourData.data[i].TotalBill_Units+
+								'</td><td class="inr-sign ct">'+yourData.data[i].TotalBill_Amt+'</td><td class="inr-sign">'+yourData.data[i].EleCharge_Amt+'</td><td class="inr-sign">'+yourData.data[i].ExtraCharge_Amt+'</td><td>'+yourData.data[i].PrstKKM_Units+
+									'</td><td>'+yourData.data[i].PrvKKM_Units+'</td><td class="ck">'+yourData.data[i].KKM_Units+'</td><td class="inr-sign ck">'+yourData.data[i].KKMBill_AMT+'</td><td class="cv">'+yourData.data[i].VKM_Units+ 
+										'</td><td class="inr-sign cv">'+yourData.data[i].VKMBill_Amt);
+							//debugger;
+						}
+						$('#tbl').DataTable(
+							{
+								columnDefs: [ { type: 'date', 'targets': [1] } ],
+								"aaSorting": [[1,'desc']],
+							}
+						);
+						
+					}).catch(err => console.log(err))
+				}
+				else{
+					// ERROR
+				}
+			})
+	}
+
+	function Delete(){
+		var a =2;
+		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=delete from ZOC7JGIoj7yYSGfM where S_no="+a).then(res=>{
+			debugger;
+			if (res.status === 200){
+				alert("succeed");
+			}
+			else{
+				alert("failed");
+			}
+		})
+	}
+	
+	function LatMonthBill(){
+		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=select PrstKWH, PrstKKM_Units from ZOC7JGIoj7yYSGfM").then(res=>{
+			if (res.status === 200){
+				
+				res.json().then(data=>{
+					const yourData = data
+					const totalrow = yourData.data.length;
+					// for(var i =0 ;i< yourData.data.length; i++){		
+						//alert(yourData.data[(totalrow-1)].PrstKWH);
+						//alert(yourData.data[totalrow-1].PrstKKM_Units)		;	
+						$('#prvkwh').val(yourData.data[totalrow-1].PrstKWH);						
+						$('#prvKkmUnits').val(yourData.data[totalrow-1].PrstKKM_Units);						
+						//$("#modalEBill").modal('show');
+					//}
+					//debugger;
+				}).catch(err => console.log(err))
+			}
+			else{
+				// ERROR
+			}
+		});
+	}
+	
+	function LastData(){
+		var sno = 1;
+		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=select PrstKWH, PrstKKM_Units from ZOC7JGIoj7yYSGfM").then(res=>{
+			if (res.status === 200){
+				
+				res.json().then(data=>{
+					const yourData = data
+					const totalrow = yourData.data.length;
+					// for(var i =0 ;i< yourData.data.length; i++){		
+						//alert(yourData.data[(totalrow-1)].PrstKWH);
+						//alert(yourData.data[totalrow-1].PrstKKM_Units)		;	
+						$('#prvkwh').val(yourData.data[totalrow-1].PrstKWH);						
+						$('#prvKkmUnits').val(yourData.data[totalrow-1].PrstKKM_Units);						
+						//$("#modalEBill").modal('show');
+					//}
+					//debugger;
+				}).catch(err => console.log(err))
+			}
+			else{
+				// ERROR
+			}
+		})
+	}
+	
+
+	
+	function ThisMonthBill(){
+		var sno = 1;
+		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=select KKM_Units,KKMBill_AMT, VKM_Units, VKMBill_Amt from ZOC7JGIoj7yYSGfM").then(res=>{
+			if (res.status === 200){
+				
+				res.json().then(data=>{
+					const yourData = data
+					const totalrow = yourData.data.length;
+									
+						$('#kku').val( yourData.data[totalrow-1].KKM_Units);						
+						$('#kkp').val("₹ "+yourData.data[totalrow-1].KKMBill_AMT);		
+						$('#vku').val(yourData.data[totalrow-1].VKM_Units);						
+						$('#vkp').val("₹ "+yourData.data[totalrow-1].VKMBill_Amt);						
+						//debugger;
+				}).catch(err => console.log(err))
+			}
+			else{
+				// ERROR
+			}
+		})
+	}
+	
+  </script>
+  
+  <script>
+	$( document ).ready(function() {
+		
+	});
+  </script>
+ 
+</head>
+<body style="margin-top: 50px;">
+	<!-- <h2 class="jumbotron text-center">Divide Electricity Bill</h2> -->
+	
+	<div id ="hideshow" class="card" style="width:250px; background-color: black;">
+		<a href="#" data-toggle="modal" style="width: 24rem;" data-target="#lastmonth" onclick="ThisMonthBill()" class="btn btn-primary">This Month Bill</a> 
+		<img class="card-img-top" src="https://bestanimations.com/media/bulbs/2014598748tumblr_nq3a0iw1wH1takhpwo1_500.gif" alt="Card image" style="width:100%">
+		<div class="card-body" style=" background-color: black;">
+		  <button id="btnlist" class="btn btn-success"onclick='GetForm()'>List</button>
+		  <a href="#" data-toggle="modal" style="float:right;" data-target="#modalBillSeparate"  class="btn btn-primary">Launch Bill Separater</a> 
+		  <lebel id="srcbtn" style="margin-top: 1rem;text-align: center;/* padding: 1rem; */color: white;background-color: #333;/* margin:auto; */display:block;/* width: 38rem; */">ⓒ 2021 Aashish Mandal</lebel>
+		  <!-- <div class="text-center">
+			  <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#modalBillSeparate">Launch
+				Bill Separater</a>
+			</div> -->
+		</div>
+	  </div>
+
+<div id="div-table" class="center">
+        <table id ="tbl" class="table table-dark">
+            <thead class="thead">
+                <th>S.NO</th>
+                <th>Date</th>
+                <th>PrstKWH</th>
+                <th>PrvKWH</th>
+                <th>TotalUnits</th>
+				<th class="ct">TotalBill</th>
+				<th>E_Charge</th>
+				<th>ExtraCharge</th>
+				<th>PrstKKM_Units</th>
+				<th>PrvKKM_Units</th>
+				<th class="ck">KKM_Units</th>
+				<th class="ck">KKMBill_AMT</th>
+				<th class="cv">VKM_Units</th>
+				<th class="cv">VKMBill_Amt</th>
+            </thead>           
+            <tbody id="tbl-body" class="table table-dark"></tbody>
+        </table>
+    </div>
+<!-- <div class="jumbotron text-center">
+  <h1>Calculate EMI </h1>
+  <p>Calculate when your loan amount will become Zero</p> 
+</div> -->
+<!-- <div class="modal fade" id="modalEmi" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content ">
+      <div class="modal-header text-center" style="background-color:orange">
+        
+        <button type="button" class="close reset" data-dismiss="modal" aria-label="Close" onclick="reset()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+		<h3 class="modal-title w-60 font-weight-bold">Interest Calculator</h3>
+      </div>
+      <div class="modal-body mx-1">
+        <div class="md-form mb-2" id="formEmi">
+          
+		  <label data-error="wrong" data-success="right" for="principleamount">Enter Principal Amount</label>
+          <input type="number" id="principleamount" class="form-control ">
+          
+        </div>
+        <div class="md-form mb-5">
+         
+		  <label data-error="wrong" data-success="right" for="rate">Enter Interest Rate</label>
+          <input type="number" id="rate" class="form-control ">
+          
+        </div>
+
+        <div class="md-form mb-4">
+         
+		  <label data-error="wrong" data-success="right" for="interest">Interest Pay/Month</label>
+          <input type="number" disabled id="interest" class="form-control ">
+          
+        </div>
+		<div class="md-form mb-5">
+         
+		   <label data-error="wrong" data-success="right" for="You-Pay">You Pay <span>&#8377;</span></label>
+          <input type="number" id="youpay" class="form-control ">
+         
+        </div>
+        <div class="md-form mb-5">
+          
+		  <label data-error="wrong" data-success="right" for="AmountLeft">Next month interest apply on this amount <span>&#8377;</span></label>
+          <input type="number" disabled id="amountleft" class="form-control ">
+          
+        </div>
+
+      </div>
+      <div class="modal-footer d-flex justify-content-center" id="signup">
+        <button class="btn btn-success " onclick="countMonth()">  Generate</button>
+		<button class="btn btn-primary pull-left" onclick="reset()">  Clear</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="modal fade" id="modalBillSeparate" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width:405px">
+    <div class="modal-content ">
+      <div class="modal-header text-center" style="background-color:orange">
+        
+        <button type="button" class="close reset" data-dismiss="modal" aria-label="Close" onclick="reset()">
+          <span id="cross" aria-hidden="true">&times;</span>
+        </button>
+		<h3 class="modal-title w-60 font-weight-bold">Electricity Bill Separater</h3>
+      </div>
+      <div class="modal-body mx-1 validation">
+          <div class="md-form mb-2" id="formEmi">
+          
+		  <label data-error="wrong" data-success="right" for="date">Date</label>
+          <input type="Date" id="date" class="form-control ">
+          
+        </div>
+		<div class="md-form mb-2" id="formEmi">
+          
+		  <label data-error="wrong" data-success="right" for="prstkwh">Present KWH</label>
+          <input type="number" id="prstkwh" class="form-control " onclick="LastData()">
+          
+        </div>
+		<div class="md-form mb-2" id="formEmi">          
+		  <label data-error="wrong" data-success="right" for="prekwh">Previous KWH</label>
+          <input type="number" id="prvkwh" class="form-control ">         
+        </div>
+		<div class="md-form mb-2" id="formEmi">          
+		  <label data-error="wrong" data-success="right" for="totalBill">Total Bill</label>
+          <input type="number" id="totalbill" class="form-control ">         
+        </div>
+		<!-- <div class="md-form mb-2" id="formEmi">           -->
+		  <!-- <label data-error="wrong" data-success="right" for="prekwh">Electricity Charge</label> -->
+          <!-- <button type="number" id="elecharge" class="form-control ">          -->
+        <!-- </div> -->
+
+		
+		<div class="md-form mb-2" id="ECharge" >
+			<div>		
+			  <label data-error="wrong" data-success="right" for="prstkkmUnits">Prst KKM Units </label>
+			  <input type="number" id="prstKkmUnits" class="form-control ">         
+		    </div>
+			<div>		
+			  <label data-error="wrong" data-success="right" for="prvkkmUnits">Prv KKM Units </label>
+			  <input type="number" id="prvKkmUnits" class="form-control ">         
+		    </div>
+			
+			
+        </div>
+	<div class="text-center">
+  <a href="" class="btn btn-default btn-rounded mb-4 btn btn-primary" data-toggle="modal" data-target="#modal-e-charge">Launch
+    E-charge Cal</a>
+</div>
+		
+		<!-- <div class="md-form mb-2" id="formEmi">           -->
+		  <!-- <label data-error="wrong" data-success="right" for="prstkkmUnits">Prst KKM Units </label> -->
+          <!-- <input type="number" id="prstKKmUnits" class="form-control ">          -->
+        <!-- </div> -->
+		<!-- <div class="md-form mb-2" id="formEmi">           -->
+		  <!-- <label data-error="wrong" data-success="right" for="prekkmunits">Prv KKM Units</label> -->
+          <!-- <input type="number" id="prvkkmunits" class="form-control ">          -->
+        <!-- </div> -->
+		
+      
+      </div>
+      <div class="modal-footer d-flex justify-content-center" id="signup">
+        <button class="btn btn-success " id ="validate" onclick="billDivide()">  Generate</button>
+		<button class="btn btn-primary pull-left" onclick="reset()">  Clear</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade modal-open" id="modal-e-charge" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-left" role="document" style="width:600px">
+    <div class="modal-content ">
+      <div class="modal-header text-center" style="background-color:orange">
+        
+        <button type="button" class="close" onclick="$('#modal-e-charge').modal('hide');" aria-label="Close">
+          <span id="cross" aria-hidden="true">&times;</span>
+        </button>
+		<h3 class="modal-title w-60 font-weight-bold">Electricity Bill Separater</h3>
+      </div>
+      <div class="modal-body mx-1 keyprss" style="display: flex " >
+			<tr>
+				<td>
+					<div class="md-form mb-6" id="vdivb">      
+					  <label  style=" margin-left:115px" id="vunit"> </label>
+					  <input type="number" id="vid55" class=" ">         
+					  <input type="number" id="vid6" class=" "> 
+					  <input type="number" id="vid65" class=" ">         
+					  <input type="number" id="vid7" class=" ">  
+					  <input type="number" id="vidb" disabled="disabled" class=" ">  
+					  <label id="vidb" data-error="wrong" data-success="right" for="date"></label>		 
+					</div>
+				</td>
+				<td>
+					<div class="md-form mb-6" id="kdivb">   
+					  <label style=" margin-left:115px" id ="kunit"> </label>
+					  <input type="number" id="kid55" class=" ">         
+					  <input type="number" id="kid6" class=" "> 
+					  <input type="number" id="kid65" class=" ">         
+					  <input type="number" id="kid7" class=" ">
+					  <input type="number" id="kidb" disabled="disabled" class=" ">
+					  <label id="kidb" data-error="wrong" data-success="right" for="date"></label>	
+				</div>
+			</td>
+			</tr>
+        </div>
+			    <div class="modal-footer d-flex justify-content-center" id="signup">
+        <button class="btn btn-success " onclick="echargeSep()">  generate</button>		
+		<button class="btn btn-primary pull-left" onclick="clearData()">  clear</button>
+		 <button class="btn btn-success pull-left" onclick="autoFill()">  Fill</button>
+      </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+
+<!-- <div class="text-center">
+  <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#modalEmi">Launch
+    Interest Calculator</a>
+</div> -->
+
+<!-- <div align="center">
+	<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfZoZjz_1p7laLS5U7uby8CgIH24q7MJIA395pIdV-oHvlL-Q/viewform?embedded=true" width="400" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>	
+</div> -->
+<!-- Modal: modal Final EBill -->
+<div class="modal fade" id="modalEBill" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" id ="src" role="document" style="width:550px">
+    <div class="modal-content">
+      <!--Header-->
+	   <div class="modal-header text-center" style="background-color:orange">        
+        <button type="button" class="close reset" data-dismiss="modal" aria-label="Close" onclick="reset()">
+          <span id="cross" aria-hidden="true">&times;</span>
+        </button>		
+		<h3 class="modal-title w-60 font-weight-bold">Your Electricity Bill</h3>
+      </div>
+	  
+      
+      <!--Body   finalpage -->
+      <div class="modal-body">
+        <table class="table table-hover" style="margin-bottom: 10px;">
+          <thead>
+            <tr>
+				 <div class="col-sm-12">
+					<span style="float:left; margin-left: 57px; " >Date</span>
+					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="bdate" value="">
+				</div>
+			</tr>
+			<tr>
+				 <div class="col-sm-12">
+					 <div class="col-sm-6">
+						<span style="float:left;" >Present KWH:</span>
+						<input type="text" style="float:right;width: 100px;" readonly class="form-control-plaintext" id="prstU" value="">
+					</div>			 
+					 <div class="col-sm-6">
+						<span style="float:left;" >Previous KWH:</span>
+						<input type="text" style="float:right; width: 100px;" readonly class="form-control-plaintext" id="prvU" value="">
+					</div>
+				</div>			
+			</tr>
+			<tr>
+				 <div class="col-sm-12">
+					<span style="float:left; margin-left: 57px; " >Total Bill:</span>
+					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="tb" value="">
+				</div>
+			</tr>
+			<tr>
+				 <div class="col-sm-12">
+					<span style="float:left; margin-left: 57px; " >Total Bill Units:</span>
+					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="tbu" value="">
+				</div>
+			</tr>
+			<tr>
+				 <div class="col-sm-12">
+					<span style="float:left; margin-left: 57px; " >Electricity Charge:</span>
+					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="ec" value="">
+				</div>
+			</tr>
+			
+			<tr>
+				 <div class="col-sm-12">
+					 <div class="col-sm-6">
+						<span style="float:left;" >Prst KKM KWH:</span>
+						<input type="text" style="float:right;width: 100px;" readonly class="form-control-plaintext" id="prstkkwh" value="">
+					</div>			 
+					 <div class="col-sm-6">
+						<span style="float:left; " >Prv KKM KWH:</span>
+						<input type="text" style="float:right;width: 100px;" readonly class="form-control-plaintext" id="prvkkwh" value="">
+					</div>
+				</div>			
+			</tr>
+			 </thead>        
+        </table>
+		 <div class="modal-body" >
+
+			<table class="table table-hover">
+			<thead>
+				<tr>
+					<div class="col-sm-12">
+						<div class="col-sm-6" style="background-color: #b3e22b;">					    							
+							<div class="pay">
+						<label>VKM Bill	</label>
+						</div>					
+							<span style="float:left;">Units:</span>
+							<input type="text" style="float:right; width:100px;margin-top: 2px;" readonly class="form-control-plaintext" id="vunits" value="">												
+							<span style="float:left;margin-top: 18px;">Pay Rs:</span>
+							<input type="text" style="float:right;  width:100px;margin-top: 16px; background-color:black; color:white;" readonly class="form-control-plaintext" id="vpay" value="">											
+						</div>							
+						<div class="col-sm-6"style="background-color: #dbc407;">
+						<div class="pay">
+						<label>KKM Bill	</label>
+						</div>
+							<span style="float:left;"  > Units:</span>
+							<input type="text" style="float:right;width:100px; margin-top: 2px; " readonly class="form-control-plaintext" id="kunits" value="">
+							<span style="float:left;;margin-top: 18px;">Pay Rs:</span>
+							<input type="text" style="float:right;width: 100px; margin-top: 16px; background-color:black; color:white;" readonly class="form-control-plaintext" id="kpay" value="">
+										
+						</div>
+					</div>			
+				</tr>
+			</thead>
+			</table>
+			
+			<!--Footer-->
+			<div class="modal-footer" style="padding: 2px;/* margin: auto; *//* display: block; */">
+				<lebel id="srcbtn"  style="text-align: center;padding: 1rem;background-color:yellow;margin:auto;display:block;/* width: 38rem; */">ⓒ 2021 Aashish Mandal
+					<button id="download" class="btn btn-success" onclick="takeshot()" style="float: left;">Download</button>
+					<button id="savetosheet" class="btn btn-primary" onclick="" data-toggle="modal" data-target="#modalLoginAvatar" style="float: right;">Save</button>
+				</lebel>
+			</div>
+
+		</div>
+  	  </div>
+</div>
+</div>
+</div>
+<!--end Modal: modalEBill -->
+
+<!--Pass-->
+<div class="modal fade modal" id="modalLoginAvatar" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog cascading-modal modal-avatar modal-sm" role="document">
+    <!--Content-->
+    <div class="modal-content">
+		
+      <!--Header-->
+      <div class="modal-header">
+        <img src="https://i.pinimg.com/originals/01/71/5d/01715d903f85b151035284ed601fdfd0.gif" alt="avatar" class="rounded-circle img-responsive">
+      </div>
+      <!--Body-->
+      <div class="modal-body mb-5">
+
+        <div class="md-form ml-0 text-center mr-0">
+          <input type="password" id="pass-id" class="form-control form-control-sm validate ml-0">
+          <label data-error="wrong" data-success="right" for="form29" class="ml-0">Enter password</label>
+        </div>
+
+        <div class="">
+			<button id="login" class="btn btn-success" onclick="Validate()" style="float: right;">Validate</button>
+			<button id="exit" class="btn btn-danger" onclick="$('#modalLoginAvatar').modal('hide');">Close</button>
+		  </button>	
+
+        </div>
+      </div>
+
+    </div>
+    <!--/.Content-->
+  </div>
+</div>
+
+<div class="modal fade modal" id="modalLoginAvatar1" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog cascading-modal modal-avatar modal-sm" role="document">
+	  <!--Content-->
+	  <div class="modal-content">
+		  
+		<!--Header-->
+		<div class="modal-header">
+		  <img src="https://i.pinimg.com/originals/01/71/5d/01715d903f85b151035284ed601fdfd0.gif" alt="avatar" class="rounded-circle img-responsive">
+		</div>
+		<!--Body-->
+		<div class="modal-body mb-5">
+  
+		  <div class="md-form ml-0 text-center mr-0">
+			<input type="password" id="pass-id1" class="form-control form-control-sm validate ml-0">
+			<label data-error="wrong" data-success="right" for="form29" class="ml-0">Enter password</label>
+		  </div>
+  
+		  <div class="">
+			  <button id="login1" class="btn btn-success" onclick="" style="float: right;">Validate</button>
+			  <button id="exit1" class="btn btn-danger" onclick="$('#modalLoginAvatar1').modal('hide');">Close</button>
+			</button>	
+  
+		  </div>
+		</div>
+  
+	  </div>
+	  <!--/.Content-->
+	</div>
+  </div>
+
+  <div class="modal fade modal" id="lastmonth" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog cascading-modal modal-avatar " role="document">
+	  <!--Content-->
+	  <div class="modal-content" style=" width: 307px; background: rgb(190, 141, 247);">
+	  	<div class="modal-header modal-header1">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4 class="modal-title">This Month Bill</h4>
+		</div>
+		<div class="modal-body"  >
+
+			<table class=" table table-hover">
+			<thead>				
+			</thead>
+			<tbody>
+				<tr class="thbillk"><td >KKM Bill</td></tr>
+				<tr class="tdbillk"><td><label>KKM Units:</label> <input type="number" disabled id="kku"> </td></tr>
+				<tr class="tdbillk"><td><label>KKM Pays:</label> <input type="text" disabled id="kkp"> </td></tr>
+
+				<tr class="thbillv"><td >VKM Bill</td></tr>
+				<tr class="tdbillv"><td><label>VKM Units:</label> <input type="number" disabled id="vku"> </td></tr >
+				<tr class="tdbillv"><td><label>VKM Pays:</label> <input type="text" disabled id="vkp"> </td></tr>	
+				
+			</tbody>
+			</table>
+			
+			<!--Footer-->
+			<div class="modal-footer modal-footer1">
+                <button type="button" class="btn btn-danger" data-dismiss="modal"> Close</button>
+            </div>
+	
+		</div>
+		
+		
+		<!--Body-->
+		<!-- <div class="modal-body mb-5">
+  
+		  <div class="md-form ml-0 text-center mr-0">
+			<input type="password" id="pass-id1" class="form-control form-control-sm validate ml-0">
+			<label data-error="wrong" data-success="right" for="form29" class="ml-0">Enter password</label>
+		  </div>
+  
+		  <div class="">
+			  <button id="login1" class="btn btn-success" onclick="" style="float: right;">Validate</button>
+			  <button id="exit1" class="btn btn-danger" onclick="$('#modalLoginAvatar1').modal('hide');">Close</button>
+			</button>	
+  
+		  </div>
+		</div> -->
+  
+	  </div>
+	  <!--/.Content-->
+	</div>
+  </div>
+
+
+  <div>
+	
+  </div>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+// 	$(".keyprss").find("input").keypress(function(){
+// 	$(this).val();
+// })
+$('.keyprss').find('input').focus(function() {
+        $(this).val('');
+    });
+});
+	// Define the function
+	// to screenshot the div
+	function takeshot() {
+		var date1 = $('#date').val();	
+		var date = date1.split("-").reverse().join("-");		
+		let div = document.getElementById('src');
+
+		// Use the html2canvas
+		// function to take a screenshot
+		// and append it
+		// to the output div
+		html2canvas(div).then(
+			function (canvas) {
+				var image = canvas.toDataURL();    
+    			// create temporary link  
+				var tmpLink = document.createElement( 'a' );  
+				tmpLink.download = 'bill_'+date+'.png'; // set the name of the download file 
+				//debugger;
+				tmpLink.href = image;  
+			
+				// temporarily add link to body and initiate the download  
+				document.body.appendChild( tmpLink );  
+				tmpLink.click();  
+				document.body.removeChild( tmpLink );  
+			})
+	}
+</script>
+<script>
+	function pass(a){
+			var b = ""+a*a-a/a+""+a*a-a/a ;
+			return b;
+		}
+	function Validate(){
+		var text = $("#pass-id").val();
+		
+		if(text == pass(9-10+10-20+30)){
+			SaveData();
+			
+			
+		}
+		else{
+			swal("oh no!", "Invalid Credential", "error");
+			
+		}
+	}	
+</script>
+
+<script type="text/javascript">
+    $(window).on('load', function() {				
+		$("#hideshow").hide();
+	 	$("#div-table").hide();
+        $('#modalLoginAvatar1').modal('show');
+		//$('#lastmonth').modal('show');
+		
+    });
+	$("#login1").on('click', function(){
+		var text = $("#pass-id1").val();
+		
+		if(text == pass(10)){
+			swal("Good job!", "Access Granted.", "success");
+			$('#modalLoginAvatar1').modal('hide');
+			$("#hideshow").show();	
+				
+		}
+		else{
+			$("#hideshow").hide();
+ 			$("#div-table").hide();
+			 swal("Oh.. no!", "Invalid Credential !! Try again..", "error");
+		}
+	})
+</script>
+
+<script>
+$(document).ready( function () {
+    	
+	});
+	 //$(document).ready(function(){
+		//$(this).attr('data-target', '#modalLoginAvatar');
+		//$("#modalLoginAvatar").modal('toggle');
+		//$("#hideshow").hide();
+	 	//$("#div-table").hide();
+		// var text = $("#pass-id").val();
+		// if(text == pass(10)){
+		// 	swal("Good job!", "Access Granted.", "success");
+		// 	$("#hideshow").show();		
+		// }
+		// else{
+		// 	$("#hideshow").hide();
+ 		// 	$("#div-table").hide();
+		// 	 swal("Oh.. no!", "Invalid Credential !! Try again..", "error");
+		// }
+	// 	$("#hideshow").hide();
+	// 	$("#div-table").hide();
+		
+	// 	//debugger
+	// 	function pass(a){
+	// 		var b = ""+a*a-a/a+""+a*a-a/a ;
+	// 		return b;
+	// 	}
+	// 	//pass(10);
+	// 	swal("Please Enter Password", {
+	// 		content: {
+	// 			element: "input",
+	// 			attributes: {
+	// 				placeholder: "Type your password",
+	// 				type: "password",
+	//     		},
+	//   		},    
+	// 	})
+	// 	.then((value) => {
+	// 		if(value == pass(10)){
+	// 			swal("Login Successfully",{
+	// 				icon: "success",
+	// 			}).then(()=>{
+	// 				$("#hideshow").show();
+	// 			});
+				
+	// 			//$("#div-table").show();
+	// 		}
+	// 		else{
+	// 			$("#hideshow").hide();
+	// 			$("#div-table").hide();
+	// 			swal("Wrong Password",{
+	// 				icon: "error",
+	// 			}).then((value) => {
+	// 				location.reload(true);
+	// 			})
+	// 		}  
+	// 	});
+	
+	// });
+	
+	 </script>
+</body>
+</html>
+
