@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.29/sweetalert2.min.css" integrity="sha512-doewDSLNwoD1ZCdA1D1LXbbdNlI4uZv7vICMrzxfshHmzzyFNhajLEgH/uigrbOi8ETIftUGBkyLnbyDOU5rpA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
@@ -252,7 +253,12 @@
 		$("#youpay").change(countMonth);
 		$("#formEmi").trigger("reset");
     });
+	function Back(){
+		$("#div-table").hide();
+		$("#hideshow").show();
+	}
 function GetForm(){
+	$("#hideshow").hide();
 		$("#div-table").show();
 			fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/").then(res=>{
 				if (res.status === 200){
@@ -269,6 +275,8 @@ function GetForm(){
 						}
 						$('#tbl').DataTable(
 							{
+								responsive: true,
+							
 								columnDefs: [ { type: 'date', 'targets': [1] } ],
 								"aaSorting": [[1,'desc']],
 							}
@@ -368,21 +376,17 @@ function GetForm(){
 	
   </script>
   
-  <script>
-	$( document ).ready(function() {
-		
-	});
-  </script>
+  
  
 </head>
 <body style="margin-top: 50px;">
 	<!-- <h2 class="jumbotron text-center">Divide Electricity Bill</h2> -->
 	
-	<div id ="hideshow" class="card" style="width:250px; background-color: black;">
-		<a href="#" data-toggle="modal" style="width: 24rem;" data-target="#lastmonth" onclick="ThisMonthBill()" class="btn btn-primary">This Month Bill</a> 
+	<div id ="hideshow" class="card" style="width:300px; background-color: black;">
+		<a href="#" data-toggle="modal" style="width: 29rem;" data-target="#lastmonth" onclick="ThisMonthBill()" class="btn btn-primary">This Month Bill</a> 
 		<img class="card-img-top" src="https://bestanimations.com/media/bulbs/2014598748tumblr_nq3a0iw1wH1takhpwo1_500.gif" alt="Card image" style="width:100%">
 		<div class="card-body" style=" background-color: black;">
-		  <button id="btnlist" class="btn btn-success"onclick='GetForm()'>List</button>
+		  <button id="btnlist" class="btn btn-success"onclick='GetForm()'>All Bills</button>
 		  <a href="#" data-toggle="modal" style="float:right;" data-target="#modalBillSeparate"  class="btn btn-primary">Launch Bill Separater</a> 
 		  <lebel id="srcbtn" style="margin-top: 1rem;text-align: center;/* padding: 1rem; */color: white;background-color: #333;/* margin:auto; */display:block;/* width: 38rem; */">ⓒ 2021 Aashish Mandal</lebel>
 		  <!-- <div class="text-center">
@@ -393,7 +397,8 @@ function GetForm(){
 	  </div>
 
 <div id="div-table" class="center">
-        <table id ="tbl" class="table table-dark">
+	<button id="btnback" style="float:left;" class="btn btn-success"onclick='Back()'>Back</button>
+        <table id ="tbl" class="display nowrap" style="width:100%">
             <thead class="thead">
                 <th>S.NO</th>
                 <th>Date</th>
@@ -470,8 +475,8 @@ function GetForm(){
 </div> -->
 
 <div class="modal fade" id="modalBillSeparate" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document" style="width:405px">
-    <div class="modal-content ">
+  <div class="modal-dialog" role="document" >
+    <div class="modal-content modal-sm">
       <div class="modal-header text-center" style="background-color:orange">
         
         <button type="button" class="close reset" data-dismiss="modal" aria-label="Close" onclick="reset()">
@@ -483,13 +488,13 @@ function GetForm(){
           <div class="md-form mb-2" id="formEmi">
           
 		  <label data-error="wrong" data-success="right" for="date">Date</label>
-          <input type="Date" id="date" class="form-control ">
+          <input type="Date" id="date" class="form-control">
           
         </div>
 		<div class="md-form mb-2" id="formEmi">
           
 		  <label data-error="wrong" data-success="right" for="prstkwh">Present KWH</label>
-          <input type="number" id="prstkwh" class="form-control " onclick="LastData()">
+          <input type="number" id="prstkwh" class="form-control" onclick="LastData()">
           
         </div>
 		<div class="md-form mb-2" id="formEmi">          
@@ -542,8 +547,7 @@ function GetForm(){
   </div>
   
   <div class="modal fade modal-open" id="modal-e-charge" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-left" role="document" style="width:600px">
-    <div class="modal-content ">
+    <div class="modal-content modal-sm">
       <div class="modal-header text-center" style="background-color:orange">
         
         <button type="button" class="close" onclick="$('#modal-e-charge').modal('hide');" aria-label="Close">
@@ -551,7 +555,7 @@ function GetForm(){
         </button>
 		<h3 class="modal-title w-60 font-weight-bold">Electricity Bill Separater</h3>
       </div>
-      <div class="modal-body mx-1 keyprss" style="display: flex " >
+      <div class="modal-body mx-1 keyprss" style="display: block " >
 			<tr>
 				<td>
 					<div class="md-form mb-6" id="vdivb">      
@@ -599,8 +603,8 @@ function GetForm(){
 </div> -->
 <!-- Modal: modal Final EBill -->
 <div class="modal fade" id="modalEBill" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" id ="src" role="document" style="width:550px">
-    <div class="modal-content">
+  <div class="modal-dialog" id ="src" role="document" style="">
+    <div class="modal-content modal-sm">
       <!--Header-->
 	   <div class="modal-header text-center" style="background-color:orange">        
         <button type="button" class="close reset" data-dismiss="modal" aria-label="Close" onclick="reset()">
@@ -611,55 +615,55 @@ function GetForm(){
 	  
       
       <!--Body   finalpage -->
-      <div class="modal-body">
+      <div class="modal-body modal-sm">
         <table class="table table-hover" style="margin-bottom: 10px;">
           <thead>
             <tr>
 				 <div class="col-sm-12">
-					<span style="float:left; margin-left: 57px; " >Date</span>
-					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="bdate" value="">
+					<span >Date</span>
+					<input type="text"  readonly class="form-control" id="bdate" value="">
 				</div>
 			</tr>
 			<tr>
-				 <div class="col-sm-12">
+				 <div class="col-sm-12 sm">
 					 <div class="col-sm-6">
-						<span style="float:left;" >Present KWH:</span>
-						<input type="text" style="float:right;width: 100px;" readonly class="form-control-plaintext" id="prstU" value="">
+						<span  >Present KWH:</span>
+						<input type="text"  readonly class="form-control" id="prstU" value="">
 					</div>			 
 					 <div class="col-sm-6">
-						<span style="float:left;" >Previous KWH:</span>
-						<input type="text" style="float:right; width: 100px;" readonly class="form-control-plaintext" id="prvU" value="">
+						<span >Previous KWH:</span>
+						<input type="text"  readonly class="form-control" id="prvU" value="">
 					</div>
 				</div>			
 			</tr>
 			<tr>
 				 <div class="col-sm-12">
-					<span style="float:left; margin-left: 57px; " >Total Bill:</span>
-					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="tb" value="">
+					<span >Total Bill:</span>
+					<input type="text"  readonly class="form-control" id="tb" value="">
+				</div>
+			</tr>	
+			<tr>
+				 <div class="col-sm-12">
+					<span >Total Bill Units:</span>
+					<input type="text"  readonly class="form-control" id="tbu" value="">
 				</div>
 			</tr>
 			<tr>
 				 <div class="col-sm-12">
-					<span style="float:left; margin-left: 57px; " >Total Bill Units:</span>
-					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="tbu" value="">
-				</div>
-			</tr>
-			<tr>
-				 <div class="col-sm-12">
-					<span style="float:left; margin-left: 57px; " >Electricity Charge:</span>
-					<input type="text" style="float:inherit" readonly class="form-control-plaintext" id="ec" value="">
+					<span >Electricity Charge:</span>
+					<input type="text"  readonly class="form-control" id="ec" value="">
 				</div>
 			</tr>
 			
 			<tr>
 				 <div class="col-sm-12">
 					 <div class="col-sm-6">
-						<span style="float:left;" >Prst KKM KWH:</span>
-						<input type="text" style="float:right;width: 100px;" readonly class="form-control-plaintext" id="prstkkwh" value="">
+						<span >Prst KKM KWH:</span>
+						<input type="text"  readonly class="form-control" id="prstkkwh" value="">
 					</div>			 
 					 <div class="col-sm-6">
-						<span style="float:left; " >Prv KKM KWH:</span>
-						<input type="text" style="float:right;width: 100px;" readonly class="form-control-plaintext" id="prvkkwh" value="">
+						<span >Prv KKM KWH:</span>
+						<input type="text"  readonly class="form-control" id="prvkkwh" value="">
 					</div>
 				</div>			
 			</tr>
@@ -668,38 +672,40 @@ function GetForm(){
 		 <div class="modal-body" >
 
 			<table class="table table-hover">
-			<thead>
+			<tbody>
 				<tr>
 					<div class="col-sm-12">
 						<div class="col-sm-6" style="background-color: #b3e22b;">					    							
 							<div class="pay">
-						<label>VKM Bill	</label>
-						</div>					
-							<span style="float:left;">Units:</span>
-							<input type="text" style="float:right; width:100px;margin-top: 2px;" readonly class="form-control-plaintext" id="vunits" value="">												
-							<span style="float:left;margin-top: 18px;">Pay Rs:</span>
-							<input type="text" style="float:right;  width:100px;margin-top: 16px; background-color:black; color:white;" readonly class="form-control-plaintext" id="vpay" value="">											
+								<label>VKM Bill	</label>
+							</div>
+							<div class="col-sm-12">				
+								<span >Units:</span>
+								<input type="text"  readonly class="form-control" id="vunits" value="">												
+								<span >Pay Rs:</span>
+								<input type="text" style=" background-color:black; color:white;" readonly class="form-control" id="vpay" value="">											
+							</div>
 						</div>							
 						<div class="col-sm-6"style="background-color: #dbc407;">
 						<div class="pay">
 						<label>KKM Bill	</label>
-						</div>
-							<span style="float:left;"  > Units:</span>
-							<input type="text" style="float:right;width:100px; margin-top: 2px; " readonly class="form-control-plaintext" id="kunits" value="">
-							<span style="float:left;;margin-top: 18px;">Pay Rs:</span>
-							<input type="text" style="float:right;width: 100px; margin-top: 16px; background-color:black; color:white;" readonly class="form-control-plaintext" id="kpay" value="">
-										
+						</div><div class="col-sm-12">
+							<span   > Units:</span>
+							<input type="text"  readonly class="form-control" id="kunits" value="">
+							<span >Pay Rs:</span>
+							<input type="text" style="background-color:black; color:white;" readonly class="form-control" id="kpay" value="">
+						</div>		
 						</div>
 					</div>			
 				</tr>
-			</thead>
+			</tbody>
 			</table>
 			
 			<!--Footer-->
-			<div class="modal-footer" style="padding: 2px;/* margin: auto; *//* display: block; */">
-				<lebel id="srcbtn"  style="text-align: center;padding: 1rem;background-color:yellow;margin:auto;display:block;/* width: 38rem; */">ⓒ 2021 Aashish Mandal
-					<button id="download" class="btn btn-success" onclick="takeshot()" style="float: left;">Download</button>
-					<button id="savetosheet" class="btn btn-primary" onclick="" data-toggle="modal" data-target="#modalLoginAvatar" style="float: right;">Save</button>
+			<div class="modal-footer" style="padding: 2px;">
+				<lebel id="srcbtn"  style="text-align: center; background-color:yellow;display:block;">ⓒ 2021 Aashish Mandal
+					<button id="download" style="float:left" class="btn btn-success" onclick="takeshot()" >Download</button>
+					<button id="savetosheet" class="btn btn-primary" onclick="" data-toggle="modal" data-target="#modalLoginAvatar" >Save</button>
 				</lebel>
 			</div>
 
@@ -892,7 +898,7 @@ $('.keyprss').find('input').focus(function() {
 		$("#hideshow").hide();
 	 	$("#div-table").hide();
         $('#modalLoginAvatar1').modal('show');
-		//$('#lastmonth').modal('show');
+		//$('#modalEBill').modal('show');
 		
     });
 	$("#login1").on('click', function(){
