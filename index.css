@@ -69,11 +69,11 @@ content:"\20B9";
     margin-bottom: 10px; /* Added */
 }
 span { 
-margin-top: 6px;
-    width: 118px;
+
+    
     display: block;
     
-    font-size: medium;
+    font-size: small;
  }
 button, input, select, textarea {
     font-family: inherit;
@@ -133,9 +133,9 @@ div {
     
 }
 .pay {
-    padding: 9px;
+    padding: 1px;
     background-color: #ffe6002e;
-    font-size: 18px;
+    font-size: 14px;
     text-align: center;
 }
 #cross{
