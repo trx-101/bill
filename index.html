@@ -26,9 +26,16 @@
    <link rel="stylesheet" href="index.css">
    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
   <script>
-	
+	$(function(){
+		$('.keyprss').find('input').focus(function() {
+			$(this).val('');
+		});
+	});
+
 	$(document).ready(function(){
 		
+
+
 		$("#validate").click(function (){
 			
 			$('.validation').find('input').each(function () {
@@ -87,8 +94,8 @@
 
 	function SaveData(){
 		var date = $('#bdate').val();
-		var prvkwh  = $('#prstU').val();
-		var prstkwh = $('#prvU').val();
+		var prstkwh  = $('#prstU').val();
+		var prvkwh = $('#prvU').val();
 		var totalBillA=$('#tb').val();
 		var totalBillU =$('#tbu').val();
 		var echarge = $('#ec').val();
@@ -137,26 +144,52 @@
 		$('#vunit').html("<b>VKM : </b>"+vkm_total_units);
 		//debugger;
 		var temp=0;
-		$( "#kdivb").find("input").each(function() {
+		$( "#bcnt").find("input").each(function() {
 			temp++;
-			if(temp<=4){
+			if(temp<=8){
 				$( this ).val(75);	
 			}			
 		});
-		var temp1=0;
-		$( "#vdivb").find("input").each(function() {
-			temp1++;
-			if(temp1<=4){
-				$( this ).val(75);	
-			}			
-		});		
+		// var temp1=0;
+		// $( "#bcnt").find("input").each(function() {
+		// 	temp1++;
+		// 	if(temp1<=8){
+		// 		$( this ).val(75);	
+		// 	}			
+		// });		
 	}
 	function clearData(){
-			$( "#kdivb,#vdivb").find("input").each(function() {			
+			$( "#bcnt").find("input").each(function() {			
 				$( this ).val(0);	
 				amtk=0;
 				amtv=0;
+				$("#vidb").text("");
+				$("#kidb").text("");
 		});
+	}
+	function UCountPD(){
+		var prstkwh = $('#prstkwh').val();
+		var prvkwh = $('#prvkwh').val();
+		var total_bill_units = prstkwh+prvkwh;	
+		if(total_bill_units<=300){
+			
+			var idi = 55;
+			for(var i =0; i<=1;i++){
+				$("#bcnt").append('<tr><td class="cv"><input style="width:100%;"   id="vid'+idi+'"></input></td><td class="ck"><input style="width:100%;"  id="kid'+idi+'"></input></td></tr>');
+				idi+=5;
+			}
+			$("#bcnt").append('<tr><td class="cv"><span   id="vidb"></span></td><td  class="ck"><span id ="kidb"></span></td></tr>');
+		}	
+		if(total_bill_units>300){
+			
+			var idi = 55;
+			for(var i =0; i<=3;i++){
+				$("#bcnt").append('<tr><td class="cv"><input   style="width:100%;"  id="vid'+idi+'"></input></td><td class="ck"><input style="width:100%;"  id="kid'+idi+'"></input></td></tr>');
+				idi+=5;
+			}
+			$("#bcnt").append('<tr><td  class="cv"><span   id="vidb"></span></td><td class="ck"><span  id ="kidb"></span></td></tr>');
+		}	
+
 	}
 	function echargeSep(){
 		var prstkwh = $('#prstkwh').val();
@@ -171,9 +204,9 @@
 		//$('#kunit').val("KKK : "+kkm_total_units);
 		let vkm_total_units = total_bill_units - kkm_total_units;
 		//$('#vunit').val("VKM : "+vkm_total_units);
-		
+
 		var pricek = 5.5;
-		 $( "#kdivb").find("input").each(function() {
+		 $( "#bcnt").find('.ck').find("input").each(function() {
 		
 			var val = $( this ).val();			
 			amtk += val* pricek;
@@ -181,16 +214,19 @@
 			
 		});
 		//alert(amtk);	
-		$("#kidb").val(amtk);
+		//$("#kidb").val(amtk);
+		$("#kidb").text(amtk);
+
 		var pricev =5.5;
-		$( "#vdivb").find("input").each(function() {
+		$( "#bcnt").find('.cv').find("input").each(function() {
+			//debugger;
 			var val = $( this ).val();			
 			amtv += val* pricev;
 			pricev+=0.5;
 			
 		});
-		//alert(amtv);	
-		$("#vidb").val(amtv);
+		
+		$("#vidb").text(amtv);
 		/*for(kkm_total_units ;kkm_total_units>= 75;){			
 			kkm_total_units =kkm_total_units -75;
 			debugger;
@@ -231,11 +267,11 @@
 			}
 			//swal('Any fool can use a computer');
 			alert(roundToTwo(count)+" Months");
-			debugger;
+			//debugger;
 		}
 		var totalAmount = parseInt(principleamount1)+totalinterest;
 		var youPayExtra = totalAmount -  parseInt(principleamount1);
-		debugger;
+		//debugger;
 		alert("Total Amount(P+I) You Will Pay: "+roundToTwo(totalAmount)+" Rs \n Total Interest: "+ roundToTwo(youPayExtra) + " Rs");
 		
 	}
@@ -293,7 +329,7 @@ function GetForm(){
 	function Delete(){
 		var a =2;
 		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=delete from ZOC7JGIoj7yYSGfM where S_no="+a).then(res=>{
-			debugger;
+			//debugger;
 			if (res.status === 200){
 				alert("succeed");
 			}
@@ -353,18 +389,31 @@ function GetForm(){
 
 	
 	function ThisMonthBill(){
-		var sno = 1;
-		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=select KKM_Units,KKMBill_AMT, VKM_Units, VKMBill_Amt from ZOC7JGIoj7yYSGfM").then(res=>{
+		var sno = 5;
+		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=select * from ZOC7JGIoj7yYSGfM").then(res=>{
 			if (res.status === 200){
-				
+				//?query=select KKM_Units,KKMBill_AMT, VKM_Units, VKMBill_Amt from ZOC7JGIoj7yYSGfM
 				res.json().then(data=>{
 					const yourData = data
 					const totalrow = yourData.data.length;
-									
-						$('#kku').val( yourData.data[totalrow-1].KKM_Units);						
-						$('#kkp').val("₹ "+yourData.data[totalrow-1].KKMBill_AMT);		
-						$('#vku').val(yourData.data[totalrow-1].VKM_Units);						
-						$('#vkp').val("₹ "+yourData.data[totalrow-1].VKMBill_Amt);						
+						//debugger		
+					$('#bdate').val(yourData.data[totalrow-1].Date);
+		$('#prstU').val(yourData.data[totalrow-1].PrstKWH);
+		$('#prvU').val(yourData.data[totalrow-1].PrvKWH);
+		$('#tb').val("₹ "+yourData.data[totalrow-1].TotalBill_Amt);
+		$('#tbu').val(yourData.data[totalrow-1].TotalBill_Units);
+		$('#ec').val("₹ "+yourData.data[totalrow-1].EleCharge_Amt);
+		$('#prstkkwh').val(yourData.data[totalrow-1].PrstKKM_Units);
+		$('#prvkkwh').val(yourData.data[totalrow-1].PrvKKM_Units);
+		$('#vunits').val(yourData.data[totalrow-1].VKM_Units);
+		$('#vpay').val("₹ "+yourData.data[totalrow-1].VKMBill_Amt);
+		$('#kunits').val(yourData.data[totalrow-1].KKM_Units);
+		$('#kpay').val("₹ "+yourData.data[totalrow-1].KKMBill_AMT);
+
+						// $('#kku').val( yourData.data[totalrow-1].KKM_Units);						
+						// $('#kkp').val("₹ "+yourData.data[totalrow-1].KKMBill_AMT);		
+						// $('#vku').val(yourData.data[totalrow-1].VKM_Units);						
+						// $('#vkp').val("₹ "+yourData.data[totalrow-1].VKMBill_Amt);						
 						//debugger;
 				}).catch(err => console.log(err))
 			}
@@ -383,7 +432,7 @@ function GetForm(){
 	<!-- <h2 class="jumbotron text-center">Divide Electricity Bill</h2> -->
 	
 	<div id ="hideshow" class="card" style="width:300px; background-color: black;">
-		<a href="#" data-toggle="modal" style="width: 29rem;" data-target="#lastmonth" onclick="ThisMonthBill()" class="btn btn-primary">This Month Bill</a> 
+		<a href="#" data-toggle="modal" style="width: 29rem;" data-target="#modalEBill" onclick="ThisMonthBill()" class="btn btn-primary">This Month Bill</a> 
 		<img class="card-img-top" src="https://bestanimations.com/media/bulbs/2014598748tumblr_nq3a0iw1wH1takhpwo1_500.gif" alt="Card image" style="width:100%">
 		<div class="card-body" style=" background-color: black;">
 		  <button id="btnlist" class="btn btn-success"onclick='GetForm()'>All Bills</button>
@@ -417,63 +466,7 @@ function GetForm(){
             </thead>           
             <tbody id="tbl-body" class="table table-dark"></tbody>
         </table>
-    </div>
-<!-- <div class="jumbotron text-center">
-  <h1>Calculate EMI </h1>
-  <p>Calculate when your loan amount will become Zero</p> 
-</div> -->
-<!-- <div class="modal fade" id="modalEmi" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content ">
-      <div class="modal-header text-center" style="background-color:orange">
-        
-        <button type="button" class="close reset" data-dismiss="modal" aria-label="Close" onclick="reset()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-		<h3 class="modal-title w-60 font-weight-bold">Interest Calculator</h3>
-      </div>
-      <div class="modal-body mx-1">
-        <div class="md-form mb-2" id="formEmi">
-          
-		  <label data-error="wrong" data-success="right" for="principleamount">Enter Principal Amount</label>
-          <input type="number" id="principleamount" class="form-control ">
-          
-        </div>
-        <div class="md-form mb-5">
-         
-		  <label data-error="wrong" data-success="right" for="rate">Enter Interest Rate</label>
-          <input type="number" id="rate" class="form-control ">
-          
-        </div>
-
-        <div class="md-form mb-4">
-         
-		  <label data-error="wrong" data-success="right" for="interest">Interest Pay/Month</label>
-          <input type="number" disabled id="interest" class="form-control ">
-          
-        </div>
-		<div class="md-form mb-5">
-         
-		   <label data-error="wrong" data-success="right" for="You-Pay">You Pay <span>&#8377;</span></label>
-          <input type="number" id="youpay" class="form-control ">
-         
-        </div>
-        <div class="md-form mb-5">
-          
-		  <label data-error="wrong" data-success="right" for="AmountLeft">Next month interest apply on this amount <span>&#8377;</span></label>
-          <input type="number" disabled id="amountleft" class="form-control ">
-          
-        </div>
-
-      </div>
-      <div class="modal-footer d-flex justify-content-center" id="signup">
-        <button class="btn btn-success " onclick="countMonth()">  Generate</button>
-		<button class="btn btn-primary pull-left" onclick="reset()">  Clear</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
+</div>
 <div class="modal fade" id="modalBillSeparate" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" >
     <div class="modal-content modal-sm">
@@ -505,12 +498,7 @@ function GetForm(){
 		  <label data-error="wrong" data-success="right" for="totalBill">Total Bill</label>
           <input type="number" id="totalbill" class="form-control ">         
         </div>
-		<!-- <div class="md-form mb-2" id="formEmi">           -->
-		  <!-- <label data-error="wrong" data-success="right" for="prekwh">Electricity Charge</label> -->
-          <!-- <button type="number" id="elecharge" class="form-control ">          -->
-        <!-- </div> -->
 
-		
 		<div class="md-form mb-2" id="ECharge" >
 			<div>		
 			  <label data-error="wrong" data-success="right" for="prstkkmUnits">Prst KKM Units </label>
@@ -524,20 +512,11 @@ function GetForm(){
 			
         </div>
 	<div class="text-center">
-  <a href="" class="btn btn-default btn-rounded mb-4 btn btn-primary" data-toggle="modal" data-target="#modal-e-charge">Launch
+  <a href="" class="btn btn-default btn-rounded mb-4 btn btn-primary" data-toggle="modal" onclick="UCountPD()" data-target="#modal-e-charge">Launch
     E-charge Cal</a>
 </div>
 		
-		<!-- <div class="md-form mb-2" id="formEmi">           -->
-		  <!-- <label data-error="wrong" data-success="right" for="prstkkmUnits">Prst KKM Units </label> -->
-          <!-- <input type="number" id="prstKKmUnits" class="form-control ">          -->
-        <!-- </div> -->
-		<!-- <div class="md-form mb-2" id="formEmi">           -->
-		  <!-- <label data-error="wrong" data-success="right" for="prekkmunits">Prv KKM Units</label> -->
-          <!-- <input type="number" id="prvkkmunits" class="form-control ">          -->
-        <!-- </div> -->
 		
-      
       </div>
       <div class="modal-footer d-flex justify-content-center" id="signup">
         <button class="btn btn-success " id ="validate" onclick="billDivide()">  Generate</button>
@@ -545,167 +524,181 @@ function GetForm(){
       </div>
     </div>
   </div>
+  </div>
   
-  <div class="modal fade modal-open" id="modal-e-charge" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-content modal-sm">
+  <!-- <div class="modal fade" id="modal-e-charge" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" id ="" role="document">
+	<div class="modal-content modal-sm">
       <div class="modal-header text-center" style="background-color:orange">
         
         <button type="button" class="close" onclick="$('#modal-e-charge').modal('hide');" aria-label="Close">
           <span id="cross" aria-hidden="true">&times;</span>
         </button>
-		<h3 class="modal-title w-60 font-weight-bold">Electricity Bill Separater</h3>
+		<h3 class="modal-title">Electricity Bill Separater</h3>
       </div>
-      <div class="modal-body mx-1 keyprss" style="display: block " >
-			<tr>
-				<td>
-					<div class="md-form mb-6" id="vdivb">      
-					  <label  style=" margin-left:115px" id="vunit"> </label>
-					  <input type="number" id="vid55" class=" ">         
-					  <input type="number" id="vid6" class=" "> 
-					  <input type="number" id="vid65" class=" ">         
-					  <input type="number" id="vid7" class=" ">  
-					  <input type="number" id="vidb" disabled="disabled" class=" ">  
-					  <label id="vidb" data-error="wrong" data-success="right" for="date"></label>		 
+      <div class="modal-body  keyprss">
+		<table class="table">
+			<tbody id="bcnt">
+				
+			</tbody>
+		</table>
+				 <tr>
+					<td>
+						<div class="md-form mb-6" id="vdivb">      
+						<label  style=" margin-left:115px" id="vunit"> </label>
+						<input type="number" id="vid55" class=" ">         
+						<input type="number" id="vid6" class=" "> 
+						<input type="number" id="vid65" class=" ">         
+						<input type="number" id="vid7" class=" ">  
+						<input type="number" id="vidb" disabled="disabled" class=" ">  
+						<label id="vidb" data-error="wrong" data-success="right" for="date"></label>		 
+						</div>
+					</td>
+					<td>
+						<div class="md-form mb-6" id="kdivb">   
+						<label style=" margin-left:115px" id ="kunit"> </label>
+						<input type="number" id="kid55" class=" ">         
+						<input type="number" id="kid6" class=" "> 
+						<input type="number" id="kid65" class=" ">         
+						<input type="number" id="kid7" class=" ">
+						<input type="number" id="kidb" disabled="disabled" class=" ">
+						<label id="kidb" data-error="wrong" data-success="right" for="date"></label>	
 					</div>
 				</td>
-				<td>
-					<div class="md-form mb-6" id="kdivb">   
-					  <label style=" margin-left:115px" id ="kunit"> </label>
-					  <input type="number" id="kid55" class=" ">         
-					  <input type="number" id="kid6" class=" "> 
-					  <input type="number" id="kid65" class=" ">         
-					  <input type="number" id="kid7" class=" ">
-					  <input type="number" id="kidb" disabled="disabled" class=" ">
-					  <label id="kidb" data-error="wrong" data-success="right" for="date"></label>	
-				</div>
-			</td>
-			</tr>
-        </div>
+				</tr> 
+			        </div>
 			    <div class="modal-footer d-flex justify-content-center" id="signup">
         <button class="btn btn-success " onclick="echargeSep()">  generate</button>		
 		<button class="btn btn-primary pull-left" onclick="clearData()">  clear</button>
 		 <button class="btn btn-success pull-left" onclick="autoFill()">  Fill</button>
       </div>
       </div>
-      
-    </div>
   </div>
-  
-</div>
 
-<!-- <div class="text-center">
-  <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#modalEmi">Launch
-    Interest Calculator</a>
-</div> -->
+    </div> -->
+	
+	<div class="modal fade modal" id="modal-e-charge" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog cascading-modal modal-avatar " role="document">
+		  <!--Content-->
+		  <div class="modal-content" style=" width: 307px; background: rgb(190, 141, 247);">
+			  <div class="modal-header modal-header1">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">This Month Bill</h4>
+			</div>
+			<div class="modal-body keyprss"  >
+	
+				<table class=" table table-hover">
+				<thead>				
+				</thead>
+				<tbody id="bcnt">
+					<!-- <tr><td id="vtbc">VKM</td><td id=""></td></tr> -->
+					<label  style="margin-left: 40px; " id="vunit"> </label>
+					<label style=" margin-left:115px" id ="kunit"> </label>
+					
+				</tbody>
+				</table>
+				
+				<!--Footer-->
+				<!-- <div class="modal-footer modal-footer1">
+					<button type="button" class="btn btn-danger" data-dismiss="modal"> Close</button>
+				</div> -->
+				<div class="modal-footer" id="signup">
+					<button class="btn btn-success " onclick="echargeSep()">  generate</button>		
+					<button class="btn btn-primary pull-left" onclick="clearData()">  clear</button>
+					 <button class="btn btn-success pull-left" onclick="autoFill()">  Fill</button>
+				  </div>
+		
+			</div>
+			
+			
+	  
+		  </div>
+		  <!--/.Content-->
+		</div>
+	  </div>
 
-<!-- <div align="center">
-	<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfZoZjz_1p7laLS5U7uby8CgIH24q7MJIA395pIdV-oHvlL-Q/viewform?embedded=true" width="400" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>	
-</div> -->
+
 <!-- Modal: modal Final EBill -->
 <div class="modal fade" id="modalEBill" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" id ="src" role="document" style="">
+  <div class="modal-dialog" id ="src" role="document">
     <div class="modal-content modal-sm">
       <!--Header-->
 	   <div class="modal-header text-center" style="background-color:orange">        
         <button type="button" class="close reset" data-dismiss="modal" aria-label="Close" onclick="reset()">
           <span id="cross" aria-hidden="true">&times;</span>
         </button>		
-		<h3 class="modal-title w-60 font-weight-bold">Your Electricity Bill</h3>
+		<h3 class="modal-title w-20 font-weight-bold">Your Electricity Bill</h3>
       </div>
-	  
-      
-      <!--Body   finalpage -->
-      <div class="modal-body modal-sm">
-        <table class="table table-hover" style="margin-bottom: 10px;">
-          <thead>
-            <tr>
-				 <div class="col-sm-12">
-					<span >Date</span>
-					<input type="text"  readonly class="form-control" id="bdate" value="">
-				</div>
+
+	  <div class="modal-body">
+		<table class="table table-dark" >
+		<tbody class="">
+            <tr >
+				<td ><span >Date</span></td>
+				<td colspan="3"><input type="text"  readonly class="form-control" id="bdate" value=""></td>
+				
+			</tr>  
+			<tr>
+				<td><span>Present KWH:</span></td>
+				<td><input type="text"  readonly class="form-control" id="prstU" value=""></td>
+				<td><span>Previous KWH:</span></td>	
+				<td><input type="text"  readonly class="form-control" id="prvU" value=""></td>	
 			</tr>
 			<tr>
-				 <div class="col-sm-12 sm">
-					 <div class="col-sm-6">
-						<span  >Present KWH:</span>
-						<input type="text"  readonly class="form-control" id="prstU" value="">
-					</div>			 
-					 <div class="col-sm-6">
-						<span >Previous KWH:</span>
-						<input type="text"  readonly class="form-control" id="prvU" value="">
-					</div>
-				</div>			
+				
 			</tr>
 			<tr>
-				 <div class="col-sm-12">
-					<span >Total Bill:</span>
-					<input type="text"  readonly class="form-control" id="tb" value="">
-				</div>
+				<td><span>Total Bill:</span></td>
+				<td colspan="3"><input type="text"  readonly class="form-control" id="tb" value=""></td>	
 			</tr>	
 			<tr>
-				 <div class="col-sm-12">
-					<span >Total Bill Units:</span>
-					<input type="text"  readonly class="form-control" id="tbu" value="">
-				</div>
+                <td><span>Total Bill Units:</span></td>
+				<td colspan="3"><input type="text"  readonly class="form-control" id="tbu" value=""></td>	
 			</tr>
-			<tr>
-				 <div class="col-sm-12">
-					<span >Electricity Charge:</span>
-					<input type="text"  readonly class="form-control" id="ec" value="">
-				</div>
+			<tr>				
+			    <td><span>Electricity Charge:</span></td>
+			    <td colspan="3"><input type="text"  readonly class="form-control" id="ec" value=""></td>
 			</tr>
 			
 			<tr>
-				 <div class="col-sm-12">
-					 <div class="col-sm-6">
-						<span >Prst KKM KWH:</span>
-						<input type="text"  readonly class="form-control" id="prstkkwh" value="">
-					</div>			 
-					 <div class="col-sm-6">
-						<span >Prv KKM KWH:</span>
-						<input type="text"  readonly class="form-control" id="prvkkwh" value="">
-					</div>
-				</div>			
+				<td><span>Prst KKM KWH:</span></td>
+				<td><input type="text"  readonly class="form-control" id="prstkkwh" value=""></td>
+				<td><span>Prv KKM KWH:</span></td>
+				<td><input type="text"  readonly class="form-control" id="prvkkwh" value=""></td>
 			</tr>
-			 </thead>        
+			<tr>
+				
+			</tr>	
+			
+		</tbody>	 
         </table>
+	</div>	
 		 <div class="modal-body" >
 
-			<table class="table table-hover">
-			<tbody>
-				<tr>
-					<div class="col-sm-12">
-						<div class="col-sm-6" style="background-color: #b3e22b;">					    							
-							<div class="pay">
-								<label>VKM Bill	</label>
-							</div>
-							<div class="col-sm-12">				
-								<span >Units:</span>
-								<input type="text"  readonly class="form-control" id="vunits" value="">												
-								<span >Pay Rs:</span>
-								<input type="text" style=" background-color:black; color:white;" readonly class="form-control" id="vpay" value="">											
-							</div>
-						</div>							
-						<div class="col-sm-6"style="background-color: #dbc407;">
-						<div class="pay">
-						<label>KKM Bill	</label>
-						</div><div class="col-sm-12">
-							<span   > Units:</span>
-							<input type="text"  readonly class="form-control" id="kunits" value="">
-							<span >Pay Rs:</span>
-							<input type="text" style="background-color:black; color:white;" readonly class="form-control" id="kpay" value="">
-						</div>		
-						</div>
-					</div>			
+			<table class="table">
+			<tbody class="td1">
+				<tr class="trd trv"><td colspan="4">VKM Bill</td></tr>
+				<tr class="trd trv1">
+					<td><span >Units:</span></td>
+					<td><input type="text"  readonly class="form-control" id="vunits" value="">	</td>
+					<td><span >Pay Rs:</span></td>
+					<td><input type="text" style=" background-color:black; color:white;" readonly class="form-control" id="vpay" value=""></td>	
+				</tr>
+				<tr class="trd trk"><td colspan="4">KKM Bill</td></tr>
+				<tr class="trd trk1">					
+					<td><span> Units:</span></td>
+					<td><input type="text"  readonly class="form-control" id="kunits" value=""></td>
+					<td><span >Pay Rs:</span></td>
+					<td><input type="text" style="background-color:black; color:white;" readonly class="form-control" id="kpay" value=""></td>
 				</tr>
 			</tbody>
 			</table>
 			
 			<!--Footer-->
-			<div class="modal-footer" style="padding: 2px;">
+			<div class="modal-footer" style="padding: 10px;">
 				<lebel id="srcbtn"  style="text-align: center; background-color:yellow;display:block;">ⓒ 2021 Aashish Mandal
 					<button id="download" style="float:left" class="btn btn-success" onclick="takeshot()" >Download</button>
-					<button id="savetosheet" class="btn btn-primary" onclick="" data-toggle="modal" data-target="#modalLoginAvatar" >Save</button>
+					<button id="savetosheet"style="float:right" class="btn btn-primary" onclick="" data-toggle="modal" data-target="#modalLoginAvatar" >Save</button>
 				</lebel>
 			</div>
 
@@ -713,7 +706,7 @@ function GetForm(){
   	  </div>
 </div>
 </div>
-</div>
+
 <!--end Modal: modalEBill -->
 
 <!--Pass-->
@@ -838,27 +831,21 @@ function GetForm(){
 
 <script type="text/javascript">
 
-$(document).ready(function(){
-// 	$(".keyprss").find("input").keypress(function(){
-// 	$(this).val();
-// })
-$('.keyprss').find('input').focus(function() {
-        $(this).val('');
-    });
-});
 	// Define the function
 	// to screenshot the div
 	function takeshot() {
-		var date1 = $('#date').val();	
+		var date1 = $('#bdate').val();	
 		var date = date1.split("-").reverse().join("-");		
 		let div = document.getElementById('src');
-
+		$("#savetosheet").remove();
+		$("#download").remove();
 		// Use the html2canvas
 		// function to take a screenshot
 		// and append it
 		// to the output div
 		html2canvas(div).then(
 			function (canvas) {
+
 				var image = canvas.toDataURL();    
     			// create temporary link  
 				var tmpLink = document.createElement( 'a' );  
@@ -894,7 +881,11 @@ $('.keyprss').find('input').focus(function() {
 </script>
 
 <script type="text/javascript">
-    $(window).on('load', function() {				
+	function BillCNT(){
+		
+	}
+    $(window).on('load', function() {
+					
 		$("#hideshow").hide();
 	 	$("#div-table").hide();
         $('#modalLoginAvatar1').modal('show');
