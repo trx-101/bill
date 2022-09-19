@@ -1,6 +1,29 @@
 .swal-icon:first-child {
     margin-top: 9px;
 } 
+#bcnt{
+    text-align: center;
+    font-weight: 700;
+}
+.trd{
+    padding: 1px;
+    font-size: medium;
+    font-weight: bold;
+    text-align: center;
+    
+}
+.trk{   
+    background-color: #6eadf6;
+}
+.trk1{
+    background-color: #a5cbf5;
+}
+.trv{   
+    background-color: #f0ae4c;
+}
+.trv1{   
+    background-color: #efd7b3;
+}
 .swal-overlay--show-modal .swal-modal {
     width: 300px;   
 }  
