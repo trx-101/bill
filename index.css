@@ -5,6 +5,9 @@
     text-align: center;
     font-weight: 700;
 }
+.form-control {
+    padding: 0 !important;
+}
 .trd{
     padding: 1px;
     font-size: medium;
