@@ -293,7 +293,12 @@
 		$("#div-table").hide();
 		$("#hideshow").show();
 	}
+	function Back1(){
+		$('#div-table').show();
+		$("#modalEBill").modal('hide');
+	}
 function GetForm(){
+	$("#tbl-body > tr").remove();
 	$("#hideshow").hide();
 		$("#div-table").show();
 			fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/").then(res=>{
@@ -303,7 +308,7 @@ function GetForm(){
 						const yourData = data
 						//debugger;
 						for(var i=yourData.data.length-1;i>=0; i--){
-							$("#tbl-body").append('<tr><td>' + yourData.data[i].S_no + '</td><td>'+yourData.data[i].Date +'</td><td>'+yourData.data[i].PrstKWH+'</td><td>'+yourData.data[i].PrvKWH+'</td><td>'+yourData.data[i].TotalBill_Units+
+							$("#tbl-body").append('<tr><td> <button onclick="ViewData(this)" class="viewdta" id="'+(i+1)+'">View</button></td><td>' + yourData.data[i].S_no + '</td><td>'+yourData.data[i].Date +'</td><td>'+yourData.data[i].PrstKWH+'</td><td>'+yourData.data[i].PrvKWH+'</td><td>'+yourData.data[i].TotalBill_Units+
 								'</td><td class="inr-sign ct">'+yourData.data[i].TotalBill_Amt+'</td><td class="inr-sign">'+yourData.data[i].EleCharge_Amt+'</td><td class="inr-sign">'+yourData.data[i].ExtraCharge_Amt+'</td><td>'+yourData.data[i].PrstKKM_Units+
 									'</td><td>'+yourData.data[i].PrvKKM_Units+'</td><td class="ck">'+yourData.data[i].KKM_Units+'</td><td class="inr-sign ck">'+yourData.data[i].KKMBill_AMT+'</td><td class="cv">'+yourData.data[i].VKM_Units+ 
 										'</td><td class="inr-sign cv">'+yourData.data[i].VKMBill_Amt);
@@ -339,27 +344,38 @@ function GetForm(){
 		})
 	}
 	
-	function LatMonthBill(){
-		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=select PrstKWH, PrstKKM_Units from ZOC7JGIoj7yYSGfM").then(res=>{
-			if (res.status === 200){
-				
+	function ViewData(item){
+		var id = $(item).attr("id");
+		fetch("https://api.apispreadsheets.com/data/ZOC7JGIoj7yYSGfM/?query=select * from ZOC7JGIoj7yYSGfM where S_no="+id).then(res=>{
+			if (res.status === 200){				
 				res.json().then(data=>{
 					const yourData = data
 					const totalrow = yourData.data.length;
-					// for(var i =0 ;i< yourData.data.length; i++){		
-						//alert(yourData.data[(totalrow-1)].PrstKWH);
-						//alert(yourData.data[totalrow-1].PrstKKM_Units)		;	
-						$('#prvkwh').val(yourData.data[totalrow-1].PrstKWH);						
-						$('#prvKkmUnits').val(yourData.data[totalrow-1].PrstKKM_Units);						
-						//$("#modalEBill").modal('show');
-					//}
-					//debugger;
-				}).catch(err => console.log(err))
-			}
+						//debugger		
+					$('#bdate').val(yourData.data[totalrow-1].Date);
+					$('#prstU').val(yourData.data[totalrow-1].PrstKWH);
+					$('#prvU').val(yourData.data[totalrow-1].PrvKWH);
+					$('#tb').val("₹ "+yourData.data[totalrow-1].TotalBill_Amt);
+					$('#tbu').val(yourData.data[totalrow-1].TotalBill_Units);
+					$('#ec').val("₹ "+yourData.data[totalrow-1].EleCharge_Amt);
+					$('#prstkkwh').val(yourData.data[totalrow-1].PrstKKM_Units);
+					$('#prvkkwh').val(yourData.data[totalrow-1].PrvKKM_Units);
+					$('#vunits').val(yourData.data[totalrow-1].VKM_Units);
+					$('#vpay').val("₹ "+yourData.data[totalrow-1].VKMBill_Amt);
+					$('#kunits').val(yourData.data[totalrow-1].KKM_Units);
+					$('#kpay').val("₹ "+yourData.data[totalrow-1].KKMBill_AMT);
+
+							}).catch(err => console.log(err))
+						}
 			else{
 				// ERROR
 			}
-		});
+			$("#savetosheet").hide();
+			$("#div-table").hide();
+			$("#backbtn").show();
+			$("#modalEBill").modal('show');
+			
+		})
 	}
 	
 	function LastData(){
@@ -449,6 +465,7 @@ function GetForm(){
 	<button id="btnback" style="float:left;" class="btn btn-success"onclick='Back()'>Back</button>
         <table id ="tbl" class="display nowrap" style="width:100%">
             <thead class="thead">
+				<th>Action</th>
                 <th>S.NO</th>
                 <th>Date</th>
                 <th>PrstKWH</th>
@@ -699,6 +716,7 @@ function GetForm(){
 				<lebel id="srcbtn"  style="text-align: center; background-color:yellow;display:block;">ⓒ 2021 Aashish Mandal
 					<button id="download" style="float:left" class="btn btn-success" onclick="takeshot()" >Download</button>
 					<button id="savetosheet"style="float:right" class="btn btn-primary" onclick="" data-toggle="modal" data-target="#modalLoginAvatar" >Save</button>
+					<button id="backbtn" style="display:none;float:right;" class="btn btn-primary" onclick="Back1()" >Back</button>
 				</lebel>
 			</div>
 
