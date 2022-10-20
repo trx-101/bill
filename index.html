@@ -52,7 +52,7 @@
 });
 	});
 		
-  var amtk =0;
+        var amtk =0;
 		var amtv =0;
 	function billDivide(){
 		var date1 = $('#date').val();	
@@ -92,6 +92,81 @@
 		
 	}
 
+	function billDivide(){
+		var date1 = $('#date').val();	
+		var date = date1.split("-").reverse().join("-");		
+		var prstkwh = $('#prstkwh').val();
+		var prvkwh = $('#prvkwh').val();
+		var totalBill = $('#totalbill').val();
+		//var elecharge = $('#elecharge').val();
+		var prstkkmUnits = $('#prstKkmUnits').val();
+		var prvkkmUnits = $('#prvKkmUnits').val();
+		let total_bill_units = prstkwh- prvkwh;
+		//let extra_charge = totalBill - elecharge;
+		//var extra_charge = totalBill - (amtv+amtk);
+		let kkm_total_units = prstkkmUnits- prvkkmUnits;
+		let vkm_total_units = total_bill_units - kkm_total_units;
+		var vtmp = vkm_total_units * 6.5;
+		var ktmp = kkm_total_units * 6.5;
+		var elecharge = vtmp + ktmp;
+		var extra_charge = totalBill - elecharge;
+		let vkmBill = vtmp + (extra_charge/2);
+		let kkmBill = ktmp + (extra_charge/2);
+		$('#bdate').val(date);
+		$('#prstU').val(prstkwh);
+		$('#prvU').val(prvkwh);
+		$('#tb').val(totalBill);
+		$('#tbu').val(total_bill_units);
+		$('#ec').val(elecharge);
+		$('#prstkkwh').val(prstkkmUnits);
+		$('#prvkkwh').val(prvkkmUnits);
+		$('#vunits').val(vkm_total_units);
+		$('#vpay').val(vkmBill.toFixed(2));
+		$('#kunits').val(kkm_total_units);
+		$('#kpay').val(kkmBill.toFixed(2));
+		 $("#modalEBill").modal('show');
+		 debugger;
+		
+		
+	}
+	// function billDivide(){
+	// 	var date1 = $('#date').val();	
+	// 	var date = date1.split("-").reverse().join("-");		
+	// 	var prstkwh = $('#prstkwh').val();
+	// 	var prvkwh = $('#prvkwh').val();
+	// 	var totalBill = $('#totalbill').val();
+	// 	var elecharge = $('#elecharge').val();
+	// 	var prstkkmUnits = $('#prstKkmUnits').val();
+	// 	var prvkkmUnits = $('#prvKkmUnits').val();
+	// 	let total_bill_units = prstkwh- prvkwh;
+	// 	//let extra_charge = totalBill - elecharge;
+	// 	var extra_charge = totalBill - (amtv+amtk);
+	// 	let kkm_total_units = prstkkmUnits- prvkkmUnits;
+	// 	let vkm_total_units = total_bill_units - kkm_total_units;
+	// 	//let unit_price1 = elecharge/total_bill_units;
+	// 	//let vkmBill = vkm_total_units * unit_price1 +(extra_charge/2);
+	// 	//let kkmBill = kkm_total_units * unit_price1 +(extra_charge/2);
+	// 	let vkmBill = (extra_charge/2) + amtv ;
+	// 	let kkmBill = (extra_charge/2) +amtk ;
+	// 	//debugger;
+	// 	$('#bdate').val(date);
+	// 	$('#prstU').val(prstkwh);
+	// 	$('#prvU').val(prvkwh);
+	// 	$('#tb').val(totalBill);
+	// 	$('#tbu').val(total_bill_units);
+	// 	$('#ec').val(amtk+amtv);
+	// 	$('#prstkkwh').val(prstkkmUnits);
+	// 	$('#prvkkwh').val(prvkkmUnits);
+	// 	$('#vunits').val(vkm_total_units);
+	// 	$('#vpay').val(vkmBill.toFixed(2));
+	// 	$('#kunits').val(kkm_total_units);
+	// 	$('#kpay').val(kkmBill.toFixed(2));
+	// 	 $("#modalEBill").modal('show');
+		 
+		
+		
+	// }
+
 	function SaveData(){
 		var date = $('#bdate').val();
 		var prstkwh  = $('#prstU').val();
@@ -112,7 +187,7 @@
 				body: JSON.stringify({"data": {"Date":date,"S_no":"","PrvKWH":prvkwh,"PrstKWH":prstkwh,"KKM_Units":kkm_total_units,
 				"VKM_Units":vkm_total_units,"KKMBill_AMT":kkmBill,
 				"VKMBill_Amt":vkmBill,"PrstKKM_Units":prstkkmUnits,"EleCharge_Amt":echarge,
-				"PrvKKM_Units":prvkkmUnits,"TotalBill_Amt":totalBillA,"ExtraCharge_Amt":extra_charge,"TotalBill_Units":totalBillU}}),
+				"PrvKKM_Units":prvkkmUnits,"TotalBill_Amt":totalBillA,"ExtraCharge_Amt":extra_charge.toFixed(2),"TotalBill_Units":totalBillU}}),
 			}).then(res =>{
 				
 				if (res.status === 201){
@@ -436,6 +511,7 @@ function GetForm(){
 			else{
 				// ERROR
 			}
+			$("#backbtn").hide();
 		})
 	}
 	
@@ -447,7 +523,7 @@ function GetForm(){
 <body style="margin-top: 50px;">
 	<!-- <h2 class="jumbotron text-center">Divide Electricity Bill</h2> -->
 	
-	<div id ="hideshow" class="card" style="width:300px; background-color: black;">
+	<div hidden id ="hideshow" class="card" style="width:300px; background-color: black;">
 		<a href="#" data-toggle="modal" style="width: 29rem;" data-target="#modalEBill" onclick="ThisMonthBill()" class="btn btn-primary">This Month Bill</a> 
 		<img class="card-img-top" src="https://bestanimations.com/media/bulbs/2014598748tumblr_nq3a0iw1wH1takhpwo1_500.gif" alt="Card image" style="width:100%">
 		<div class="card-body" style=" background-color: black;">
@@ -528,7 +604,7 @@ function GetForm(){
 			
 			
         </div>
-	<div class="text-center">
+	<div hidden class="text-center">
   <a href="" class="btn btn-default btn-rounded mb-4 btn btn-primary" data-toggle="modal" onclick="UCountPD()" data-target="#modal-e-charge">Launch
     E-charge Cal</a>
 </div>
@@ -594,7 +670,7 @@ function GetForm(){
 
     </div> -->
 	
-	<div class="modal fade modal" id="modal-e-charge" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" tabindex="-1" aria-hidden="true">
+	<div hidden class="modal fade modal" id="modal-e-charge" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog cascading-modal modal-avatar " role="document">
 		  <!--Content-->
 		  <div class="modal-content" style=" width: 307px; background: rgb(190, 141, 247);">
