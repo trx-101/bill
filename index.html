@@ -101,13 +101,14 @@
 		//var elecharge = $('#elecharge').val();
 		var prstkkmUnits = $('#prstKkmUnits').val();
 		var prvkkmUnits = $('#prvKkmUnits').val();
+		var billrate = parseFloat($('#billrate').val());
 		let total_bill_units = prstkwh- prvkwh;
 		//let extra_charge = totalBill - elecharge;
 		//var extra_charge = totalBill - (amtv+amtk);
 		let kkm_total_units = prstkkmUnits- prvkkmUnits;
 		let vkm_total_units = total_bill_units - kkm_total_units;
-		var vtmp = vkm_total_units * 6.5;
-		var ktmp = kkm_total_units * 6.5;
+		var vtmp = vkm_total_units * billrate;
+		var ktmp = kkm_total_units * billrate;
 		var elecharge = vtmp + ktmp;
 		var extra_charge = totalBill - elecharge;
 		let vkmBill = vtmp + (extra_charge/2);
@@ -591,6 +592,11 @@ function GetForm(){
 		  <label data-error="wrong" data-success="right" for="totalBill">Total Bill</label>
           <input type="number" id="totalbill" class="form-control ">         
         </div>
+	<div class="md-form mb-2" id="formEmi">          
+			<label data-error="wrong" data-success="right" for="billrate">Price/Unit</label>
+			<input type="number" value="5.5" id="billrate" class="form-control "> 		         
+		  </div>
+
 
 		<div class="md-form mb-2" id="ECharge" >
 			<div>		
